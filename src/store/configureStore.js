@@ -7,13 +7,7 @@ import { combineReducers } from 'redux'
 export default function configureStore(initialState = {}) {
   const middlewares = [thunkMiddleware]
 
-  let composeEnhancers = compose
-
   if (process.env.NODE_ENV === 'development') {
-    if ('__REDUX_DEVTOOLS_EXTENSION_COMPOSE__' in window) {
-      composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    }
-
     const loggerMiddleware = createLogger()
     middlewares.push(loggerMiddleware)
   }
@@ -21,6 +15,6 @@ export default function configureStore(initialState = {}) {
   return createStore(
     combineReducers(reducers),
     initialState,
-    composeEnhancers(applyMiddleware(...middlewares))
+    compose(applyMiddleware(...middlewares))
   )
 }
