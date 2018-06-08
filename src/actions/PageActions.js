@@ -30,8 +30,8 @@ export function fetchPokemons({ REQUEST, SUCCESS }) {
   }
 }
 
-export function filterPokemons(actionType, searchTerm) {
-  return (dispatch, getState) => {
+export function filterPokemons(actionType) {
+  return (dispatch, getState) => searchTerm => {
     const displayedPokemons = getState()
       .page.pokemons.filter(pokemon => {
         return pokemon.name.includes(searchTerm.toLowerCase())

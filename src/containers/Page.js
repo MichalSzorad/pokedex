@@ -18,12 +18,12 @@ class Page extends Component {
         SUCCESS: FETCH_POKEMONS_SUCCESS
       })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`))
       .then(() => {
-        this.props.pageActions.filterPokemons(FILTER_POKEMONS, '')
+        this.props.pageActions.filterPokemons(FILTER_POKEMONS)('')
       })
   }
 
   handleSearch(event) {
-    this.props.pageActions.filterPokemons(FILTER_POKEMONS, event.target.value)
+    this.props.pageActions.filterPokemons(FILTER_POKEMONS)(event.target.value)
   }
 
   render() {
