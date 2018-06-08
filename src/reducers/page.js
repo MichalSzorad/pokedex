@@ -1,41 +1,33 @@
-import {
-  FETCH_POKEMONS_REQUEST,
-  FETCH_POKEMONS_SUCCESS,
-  FILTER_POKEMONS
-} from '../constants/Page'
+function createPageReducer(initialState, { REQUEST, SUCCESS, FILTER }) {
+  return function page(state = initialState, action) {
+    switch (action.type) {
+      case REQUEST:
+        return {
+          ...state,
+          isFetched: true
+        }
 
-const initialState = {
-  isFetched: false,
-  pokemons: [],
-  displayedPokemons: []
-}
+      case SUCCESS:
+        const { pokemons } = action
 
-export default function page(state = initialState, action) {
-  switch (action.type) {
-    case FETCH_POKEMONS_REQUEST:
-      return {
-        ...state,
-        isFetched: true
-      }
+        return {
+          ...state,
+          pokemons,
+          isFetched: false
+        }
 
-    case FETCH_POKEMONS_SUCCESS:
-      const { pokemons } = action
+      case FILTER:
+        const { displayedPokemons } = action
 
-      return {
-        ...state,
-        pokemons,
-        isFetched: false
-      }
+        return {
+          ...state,
+          displayedPokemons
+        }
 
-    case FILTER_POKEMONS:
-      const { displayedPokemons } = action
-
-      return {
-        ...state,
-        displayedPokemons
-      }
-
-    default:
-      return state
+      default:
+        return state
+    }
   }
 }
+
+export default createPageReducer
