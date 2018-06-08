@@ -4,17 +4,19 @@ function requestPokemons(actionType) {
   }
 }
 
-function receivePokemons(actionType, json) {
-  const pokemons = json.results.map(pokemon => {
-    let { url } = pokemon
-    pokemon.id = url.substring(34, url.length - 1)
+function receivePokemons(actionType) {
+  return json => {
+    const pokemons = json.results.map(pokemon => {
+      const { url } = pokemon
+      pokemon.id = url.substring(34, url.length - 1)
 
-    return pokemon
-  })
+      return pokemon
+    })
 
-  return {
-    type: actionType,
-    pokemons
+    return {
+      type: actionType,
+      pokemons
+    }
   }
 }
 
@@ -25,7 +27,7 @@ export function fetchPokemons({ REQUEST, SUCCESS }) {
     return download()
       .then(response => response.json())
       .then(json => {
-        dispatch(receivePokemons(SUCCESS, json))
+        dispatch(receivePokemons(SUCCESS)(json))
       })
   }
 }
