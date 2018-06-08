@@ -12,13 +12,11 @@ import {
 
 class Page extends Component {
   componentDidMount() {
-    this.props.pageActions.fetchPokemons().then(() => {
-      this.props.pageActions.filterPokemons('')
-    })
+    this.props.fetchPokemons().then(() => this.props.filterPokemons(''))
   }
 
   handleSearch(event) {
-    this.props.pageActions.filterPokemons(event.target.value)
+    this.props.filterPokemons(event.target.value)
   }
 
   render() {
@@ -48,19 +46,17 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    pageActions: bindActionCreators(
-      {
-        fetchPokemons: () =>
-          fetchPokemons({
-            REQUEST: FETCH_POKEMONS_REQUEST,
-            SUCCESS: FETCH_POKEMONS_SUCCESS
-          })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)),
-        filterPokemons: filterPokemons(FILTER_POKEMONS)
-      },
-      dispatch
-    )
-  }
+  return bindActionCreators(
+    {
+      fetchPokemons: () =>
+        fetchPokemons({
+          REQUEST: FETCH_POKEMONS_REQUEST,
+          SUCCESS: FETCH_POKEMONS_SUCCESS
+        })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)),
+      filterPokemons: filterPokemons(FILTER_POKEMONS)
+    },
+    dispatch
+  )
 }
 
 export default connect(
