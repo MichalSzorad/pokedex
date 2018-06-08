@@ -13,13 +13,10 @@ import {
 class Page extends Component {
   componentDidMount() {
     this.props.pageActions
-      .fetchPokemons(
-        () => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`),
-        {
-          REQUEST: FETCH_POKEMONS_REQUEST,
-          SUCCESS: FETCH_POKEMONS_SUCCESS
-        }
-      )
+      .fetchPokemons({
+        REQUEST: FETCH_POKEMONS_REQUEST,
+        SUCCESS: FETCH_POKEMONS_SUCCESS
+      })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`))
       .then(() => {
         this.props.pageActions.filterPokemons(FILTER_POKEMONS, '')
       })

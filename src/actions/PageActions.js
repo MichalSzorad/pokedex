@@ -18,8 +18,8 @@ function receivePokemons(actionType, json) {
   }
 }
 
-export function fetchPokemons(download, { REQUEST, SUCCESS }) {
-  return dispatch => {
+export function fetchPokemons({ REQUEST, SUCCESS }) {
+  return dispatch => download => {
     dispatch(requestPokemons(REQUEST))
 
     return download()
