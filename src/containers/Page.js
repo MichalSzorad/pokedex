@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import Pokemon from '../components/Pokemon'
-import Search from '../components/Search'
-import { fetchPokemons, filterPokemons } from '../actions/PageActions'
-import {
-  FETCH_POKEMONS_REQUEST,
-  FETCH_POKEMONS_SUCCESS,
-  FILTER_POKEMONS
-} from '../constants/Page'
+import connectPage from '../hoc/connect-page'
+import T from 'prop-types'
 
 class Page extends Component {
+  static propTypes = {
+    fetchPokemons: T.func.isRequired,
+    filterPokemons: T.func.isRequired,
+    Pokemon: T.func.isRequired,
+    Search: T.func.isRequired
+  }
+
   componentDidMount() {
     this.props.fetchPokemons().then(() => this.props.filterPokemons(''))
   }
@@ -21,6 +20,7 @@ class Page extends Component {
 
   render() {
     let { displayedPokemons, isFetched } = this.props.page
+    const { Pokemon, Search } = this.props
 
     let pokemons = displayedPokemons.map((pokemon, index) => {
       return (
@@ -39,27 +39,4 @@ class Page extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    page: state.page
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      fetchPokemons: () =>
-        fetchPokemons({
-          REQUEST: FETCH_POKEMONS_REQUEST,
-          SUCCESS: FETCH_POKEMONS_SUCCESS
-        })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)),
-      filterPokemons: filterPokemons(FILTER_POKEMONS)
-    },
-    dispatch
-  )
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Page)
+export default connectPage(Page)
