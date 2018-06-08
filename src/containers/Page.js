@@ -51,10 +51,11 @@ function mapDispatchToProps(dispatch) {
   return {
     pageActions: bindActionCreators(
       {
-        fetchPokemons: fetchPokemons({
-          REQUEST: FETCH_POKEMONS_REQUEST,
-          SUCCESS: FETCH_POKEMONS_SUCCESS
-        })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)),
+        fetchPokemons: () =>
+          fetchPokemons({
+            REQUEST: FETCH_POKEMONS_REQUEST,
+            SUCCESS: FETCH_POKEMONS_SUCCESS
+          })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)),
         filterPokemons: filterPokemons(FILTER_POKEMONS)
       },
       dispatch
