@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Pokemon from '../components/Pokemon'
 import Search from '../components/Search'
-import * as pageActions from '../actions/PageActions'
+import { fetchPokemons, filterPokemons } from '../actions/PageActions'
 import {
   FETCH_POKEMONS_REQUEST,
   FETCH_POKEMONS_SUCCESS,
@@ -12,18 +12,13 @@ import {
 
 class Page extends Component {
   componentDidMount() {
-    this.props.pageActions
-      .fetchPokemons({
-        REQUEST: FETCH_POKEMONS_REQUEST,
-        SUCCESS: FETCH_POKEMONS_SUCCESS
-      })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`))
-      .then(() => {
-        this.props.pageActions.filterPokemons(FILTER_POKEMONS)('')
-      })
+    this.props.pageActions.fetchPokemons().then(() => {
+      this.props.pageActions.filterPokemons('')
+    })
   }
 
   handleSearch(event) {
-    this.props.pageActions.filterPokemons(FILTER_POKEMONS)(event.target.value)
+    this.props.pageActions.filterPokemons(event.target.value)
   }
 
   render() {
@@ -54,7 +49,16 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    pageActions: bindActionCreators(pageActions, dispatch)
+    pageActions: bindActionCreators(
+      {
+        fetchPokemons: fetchPokemons({
+          REQUEST: FETCH_POKEMONS_REQUEST,
+          SUCCESS: FETCH_POKEMONS_SUCCESS
+        })(() => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)),
+        filterPokemons: filterPokemons(FILTER_POKEMONS)
+      },
+      dispatch
+    )
   }
 }
 

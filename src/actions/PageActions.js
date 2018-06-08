@@ -19,7 +19,7 @@ function receivePokemons(actionType, json) {
 }
 
 export function fetchPokemons({ REQUEST, SUCCESS }) {
-  return dispatch => download => {
+  return download => () => dispatch => {
     dispatch(requestPokemons(REQUEST))
 
     return download()
@@ -31,7 +31,7 @@ export function fetchPokemons({ REQUEST, SUCCESS }) {
 }
 
 export function filterPokemons(actionType) {
-  return (dispatch, getState) => searchTerm => {
+  return searchTerm => (dispatch, getState) => {
     const displayedPokemons = getState()
       .page.pokemons.filter(pokemon => {
         return pokemon.name.includes(searchTerm.toLowerCase())
