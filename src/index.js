@@ -13,12 +13,19 @@ import { combineReducers } from 'redux'
 
 // reducers
 import { createPageReducer } from './reducers'
+import connectPage from './hoc/connect-page'
+
+// connectors
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import Pokemon from './components/Pokemon'
+import Search from './components/Search'
+import { fetchPokemons, filterPokemons } from './actions/PageActions'
 import {
   FETCH_POKEMONS_REQUEST,
   FETCH_POKEMONS_SUCCESS,
   FILTER_POKEMONS
 } from './constants/Page'
-import connectPage from './hoc/connect-page'
 
 const middlewares = [
   thunkMiddleware,
@@ -50,6 +57,16 @@ const store = configureStore(
 )({})
 
 render(
-  <Provider store={store}>{React.createElement(connectPage(Page))}</Provider>,
+  <Provider store={store}>
+    {React.createElement(
+      connectPage(
+        connect,
+        bindActionCreators,
+        { FETCH_POKEMONS_REQUEST, FETCH_POKEMONS_SUCCESS, FILTER_POKEMONS },
+        { fetchPokemons, filterPokemons },
+        { Search, Pokemon }
+      )(Page)
+    )}
+  </Provider>,
   document.getElementById('root')
 )

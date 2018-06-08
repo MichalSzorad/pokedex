@@ -1,14 +1,20 @@
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import Pokemon from '../components/Pokemon'
-import Search from '../components/Search'
-import pokemons from './pokemons.json'
-import { fetchPokemons, filterPokemons } from '../actions/PageActions'
-import {
-  FETCH_POKEMONS_REQUEST,
-  FETCH_POKEMONS_SUCCESS,
-  FILTER_POKEMONS
-} from '../constants/Page'
+import pokemons from './pokemons'
+
+function connectPokemonSearch(
+  connect,
+  bindActionCreators,
+  actionTypes,
+  actions,
+  components
+) {
+  return Component => {
+    return connect(
+      mapStateToProps,
+      mapDispatchToProps(bindActionCreators, actions, actionTypes),
+      mergeProps(components)
+    )(Component)
+  }
+}
 
 function mapStateToProps(state) {
   return {
@@ -17,39 +23,38 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    {
-      fetchPokemons: () =>
-        fetchPokemons({
-          REQUEST: FETCH_POKEMONS_REQUEST,
-          SUCCESS: FETCH_POKEMONS_SUCCESS
-        })(() => fetch(`data:text/plain,${JSON.stringify(pokemons)}`)),
-      filterPokemons: filterPokemons(FILTER_POKEMONS)
-    },
-    dispatch
-  )
-}
-
-function mergeProps(stateProps, dispatchProps) {
-  return {
-    onMount: () =>
-      dispatchProps
-        .fetchPokemons()
-        .then(() => dispatchProps.filterPokemons('')),
-    search: dispatchProps.filterPokemons,
-    ...stateProps,
-    Pokemon,
-    Search
+function mapDispatchToProps(
+  bindActionCreators,
+  { fetchPokemons, filterPokemons },
+  { FETCH_POKEMONS_REQUEST, FETCH_POKEMONS_SUCCESS, FILTER_POKEMONS }
+) {
+  return dispatch => {
+    return bindActionCreators(
+      {
+        fetchPokemons: () =>
+          fetchPokemons({
+            REQUEST: FETCH_POKEMONS_REQUEST,
+            SUCCESS: FETCH_POKEMONS_SUCCESS
+          })(() => fetch(`data:text/plain,${JSON.stringify(pokemons)}`)),
+        filterPokemons: filterPokemons(FILTER_POKEMONS)
+      },
+      dispatch
+    )
   }
 }
 
-function connectPage(Component) {
-  return connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    mergeProps
-  )(Component)
+function mergeProps(components) {
+  return (stateProps, dispatchProps) => {
+    return {
+      onMount: () =>
+        dispatchProps
+          .fetchPokemons()
+          .then(() => dispatchProps.filterPokemons('')),
+      search: dispatchProps.filterPokemons,
+      ...stateProps,
+      ...components
+    }
+  }
 }
 
-export default connectPage
+export default connectPokemonSearch
