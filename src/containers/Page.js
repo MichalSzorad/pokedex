@@ -6,7 +6,7 @@ class Page extends Component {
     isFetched: T.bool.isRequired,
     onMount: T.func.isRequired,
     Pokemon: T.func.isRequired,
-    pokemons: T.object.isRequired,
+    pokemons: T.array.isRequired,
     search: T.func.isRequired,
     Search: T.func.isRequired
   }
@@ -24,7 +24,7 @@ class Page extends Component {
 
     const pokemonList = pokemons.map((pokemon, index) => {
       return (
-        <li className="pokemons__item">
+        <li className="pokemons__item" key={index}>
           <Pokemon pokemon={pokemon} key={index} />
         </li>
       )
