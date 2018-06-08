@@ -4,14 +4,29 @@ import { connect } from 'react-redux'
 import Pokemon from '../components/Pokemon'
 import Search from '../components/Search'
 import * as pageActions from '../actions/PageActions'
+import {
+  FETCH_POKEMONS_REQUEST,
+  FETCH_POKEMONS_SUCCESS,
+  FILTER_POKEMONS
+} from '../constants/Page'
 
 class Page extends Component {
   componentDidMount() {
-    this.props.pageActions.fetchPokemons()
+    this.props.pageActions
+      .fetchPokemons(
+        () => fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`),
+        {
+          REQUEST: FETCH_POKEMONS_REQUEST,
+          SUCCESS: FETCH_POKEMONS_SUCCESS
+        }
+      )
+      .then(() => {
+        this.props.pageActions.filterPokemons(FILTER_POKEMONS, '')
+      })
   }
 
   handleSearch(event) {
-    this.props.pageActions.filterPokemons(event.target.value)
+    this.props.pageActions.filterPokemons(FILTER_POKEMONS, event.target.value)
   }
 
   render() {
@@ -46,4 +61,7 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Page)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Page)

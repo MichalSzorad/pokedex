@@ -1,16 +1,10 @@
-import {
-  FETCH_POKEMONS_REQUEST,
-  FETCH_POKEMONS_SUCCESS,
-  FILTER_POKEMONS
-} from '../constants/Page'
-
-function requestPokemons() {
+function requestPokemons(actionType) {
   return {
-    type: FETCH_POKEMONS_REQUEST
+    type: actionType
   }
 }
 
-function receivePokemons(json) {
+function receivePokemons(actionType, json) {
   const pokemons = json.results.map(pokemon => {
     let { url } = pokemon
     pokemon.id = url.substring(34, url.length - 1)
@@ -19,25 +13,24 @@ function receivePokemons(json) {
   })
 
   return {
-    type: FETCH_POKEMONS_SUCCESS,
+    type: actionType,
     pokemons
   }
 }
 
-export function fetchPokemons() {
+export function fetchPokemons(download, { REQUEST, SUCCESS }) {
   return dispatch => {
-    dispatch(requestPokemons())
+    dispatch(requestPokemons(REQUEST))
 
-    return fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)
+    return download()
       .then(response => response.json())
       .then(json => {
-        dispatch(receivePokemons(json))
-        dispatch(filterPokemons(''))
+        dispatch(receivePokemons(SUCCESS, json))
       })
   }
 }
 
-export function filterPokemons(searchTerm) {
+export function filterPokemons(actionType, searchTerm) {
   return (dispatch, getState) => {
     const displayedPokemons = getState()
       .page.pokemons.filter(pokemon => {
@@ -46,7 +39,7 @@ export function filterPokemons(searchTerm) {
       .slice(0, 60)
 
     dispatch({
-      type: FILTER_POKEMONS,
+      type: actionType,
       displayedPokemons
     })
   }
