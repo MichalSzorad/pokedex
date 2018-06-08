@@ -18,6 +18,7 @@ import {
   FETCH_POKEMONS_SUCCESS,
   FILTER_POKEMONS
 } from './constants/Page'
+import connectPage from './hoc/connect-page'
 
 const middlewares = [
   thunkMiddleware,
@@ -49,8 +50,6 @@ const store = configureStore(
 )({})
 
 render(
-  <Provider store={store}>
-    <Page />
-  </Provider>,
+  <Provider store={store}>{React.createElement(connectPage(Page))}</Provider>,
   document.getElementById('root')
 )

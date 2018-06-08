@@ -12,9 +12,8 @@ import {
 
 function mapStateToProps(state) {
   return {
-    page: state.page,
-    Pokemon,
-    Search
+    isFetched: state.page.isFetched,
+    pokemons: state.page.displayedPokemons
   }
 }
 
@@ -25,21 +24,31 @@ function mapDispatchToProps(dispatch) {
         fetchPokemons({
           REQUEST: FETCH_POKEMONS_REQUEST,
           SUCCESS: FETCH_POKEMONS_SUCCESS
-        })(
-          () =>
-            fetch(`data:text/plain,${JSON.stringify(pokemons)}`) ||
-            fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)
-        ),
+        })(() => fetch(`data:text/plain,${JSON.stringify(pokemons)}`)),
       filterPokemons: filterPokemons(FILTER_POKEMONS)
     },
     dispatch
   )
 }
 
+function mergeProps(stateProps, dispatchProps) {
+  return {
+    onMount: () =>
+      dispatchProps
+        .fetchPokemons()
+        .then(() => dispatchProps.filterPokemons('')),
+    search: dispatchProps.filterPokemons,
+    ...stateProps,
+    Pokemon,
+    Search
+  }
+}
+
 function connectPage(Component) {
   return connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
+    mergeProps
   )(Component)
 }
 

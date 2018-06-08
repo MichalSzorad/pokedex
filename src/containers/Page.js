@@ -1,28 +1,28 @@
 import React, { Component } from 'react'
-import connectPage from '../hoc/connect-page'
 import T from 'prop-types'
 
 class Page extends Component {
   static propTypes = {
-    fetchPokemons: T.func.isRequired,
-    filterPokemons: T.func.isRequired,
+    isFetched: T.bool.isRequired,
+    onMount: T.func.isRequired,
     Pokemon: T.func.isRequired,
+    pokemons: T.object.isRequired,
+    search: T.func.isRequired,
     Search: T.func.isRequired
   }
 
   componentDidMount() {
-    this.props.fetchPokemons().then(() => this.props.filterPokemons(''))
+    this.props.onMount()
   }
 
   handleSearch(event) {
-    this.props.filterPokemons(event.target.value)
+    this.props.search(event.target.value)
   }
 
   render() {
-    let { displayedPokemons, isFetched } = this.props.page
-    const { Pokemon, Search } = this.props
+    const { Pokemon, Search, isFetched, pokemons } = this.props
 
-    let pokemons = displayedPokemons.map((pokemon, index) => {
+    const pokemonList = pokemons.map((pokemon, index) => {
       return (
         <li className="pokemons__item">
           <Pokemon pokemon={pokemon} key={index} />
@@ -33,10 +33,12 @@ class Page extends Component {
     return (
       <div className="page">
         <Search onChange={this.handleSearch.bind(this)} />
-        <ul className="pokemons">{isFetched ? <p>Loading...</p> : pokemons}</ul>
+        <ul className="pokemons">
+          {isFetched ? <p>Loading...</p> : pokemonList}
+        </ul>
       </div>
     )
   }
 }
 
-export default connectPage(Page)
+export default Page
