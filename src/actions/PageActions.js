@@ -1,52 +1,47 @@
-import {
-  FETCH_POKEMONS_REQUEST,
-  FETCH_POKEMONS_SUCCESS,
-  FILTER_POKEMONS
-} from '../constants/Page'
-
-function requestPokemons() {
+function requestPokemons(actionType) {
   return {
-    type: FETCH_POKEMONS_REQUEST
+    type: actionType
   }
 }
 
-function receivePokemons(json) {
-  const pokemons = json.results.map(pokemon => {
-    let { url } = pokemon
-    pokemon.id = url.substring(34, url.length - 1)
+function receivePokemons(actionType) {
+  return json => {
+    const pokemons = json.results.map(pokemon => {
+      const { url } = pokemon
+      pokemon.id = url.substring(34, url.length - 1)
 
-    return pokemon
-  })
+      return pokemon
+    })
 
-  return {
-    type: FETCH_POKEMONS_SUCCESS,
-    pokemons
+    return {
+      type: actionType,
+      pokemons
+    }
   }
 }
 
-export function fetchPokemons() {
-  return dispatch => {
-    dispatch(requestPokemons())
+export function fetchPokemons({ REQUEST, SUCCESS }) {
+  return download => dispatch => {
+    dispatch(requestPokemons(REQUEST))
 
-    return fetch(`https://pokeapi.co/api/v2/pokemon/?limit=784`)
+    return download()
       .then(response => response.json())
       .then(json => {
-        dispatch(receivePokemons(json))
-        dispatch(filterPokemons(''))
+        dispatch(receivePokemons(SUCCESS)(json))
       })
   }
 }
 
-export function filterPokemons(searchTerm) {
-  return (dispatch, getState) => {
+export function filterPokemons(actionType) {
+  return searchTerm => (dispatch, getState) => {
     const displayedPokemons = getState()
       .page.pokemons.filter(pokemon => {
-        return pokemon.name.includes(searchTerm.toLowerCase())
+        return pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
       })
       .slice(0, 60)
 
     dispatch({
-      type: FILTER_POKEMONS,
+      type: actionType,
       displayedPokemons
     })
   }

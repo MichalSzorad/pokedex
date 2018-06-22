@@ -3,13 +3,11 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import Page from './containers/Page'
 import './style/main.css'
-import configureStore from './store/configureStore'
 
-const store = configureStore()
+import store from './implementation/store'
+import connectPage from './implementation/connect-page'
 
 render(
-  <Provider store={store}>
-    <Page />
-  </Provider>,
+  <Provider store={store}>{React.createElement(connectPage(Page))}</Provider>,
   document.getElementById('root')
 )

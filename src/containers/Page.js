@@ -1,25 +1,30 @@
 import React, { Component } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import Pokemon from '../components/Pokemon'
-import Search from '../components/Search'
-import * as pageActions from '../actions/PageActions'
+import T from 'prop-types'
 
 class Page extends Component {
+  static propTypes = {
+    isFetched: T.bool.isRequired,
+    onMount: T.func.isRequired,
+    Pokemon: T.func.isRequired,
+    pokemons: T.array.isRequired,
+    search: T.func.isRequired,
+    Search: T.func.isRequired
+  }
+
   componentDidMount() {
-    this.props.pageActions.fetchPokemons()
+    this.props.onMount()
   }
 
   handleSearch(event) {
-    this.props.pageActions.filterPokemons(event.target.value)
+    this.props.search(event.target.value)
   }
 
   render() {
-    let { displayedPokemons, isFetched } = this.props.page
+    const { Pokemon, Search, isFetched, pokemons } = this.props
 
-    let pokemons = displayedPokemons.map((pokemon, index) => {
+    const pokemonList = pokemons.map((pokemon, index) => {
       return (
-        <li className="pokemons__item">
+        <li className="pokemons__item" key={index}>
           <Pokemon pokemon={pokemon} key={index} />
         </li>
       )
@@ -28,22 +33,12 @@ class Page extends Component {
     return (
       <div className="page">
         <Search onChange={this.handleSearch.bind(this)} />
-        <ul className="pokemons">{isFetched ? <p>Loading...</p> : pokemons}</ul>
+        <ul className="pokemons">
+          {isFetched ? <p>Loading...</p> : pokemonList}
+        </ul>
       </div>
     )
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    page: state.page
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    pageActions: bindActionCreators(pageActions, dispatch)
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Page)
+export default Page

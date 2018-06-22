@@ -1,6 +1,1 @@
-import { combineReducers } from 'redux'
-import page from './page'
-
-export default combineReducers({
-  page
-})
+export { default as createPageReducer } from './page'
